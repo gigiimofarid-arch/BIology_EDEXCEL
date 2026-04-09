@@ -1,1 +1,1532 @@
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.test-header { border-bottom: 2px solid var(--color-border-primary); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+.test-header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.test-header p { font-size: 14px; color: var(--color-text-secondary); margin-top: 4px; }
+.info-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1rem; }
+.info-pill { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 6px 14px; font-size: 13px; color: var(--color-text-secondary); }
+.info-pill strong { color: var(--color-text-primary); font-weight: 500; }
+.section-header { background: var(--color-background-secondary); border-left: 3px solid #185FA5; padding: 10px 16px; margin: 2rem 0 1rem; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; }
+.section-header h2 { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+.section-header p { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.question { border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; background: var(--color-background-primary); }
+.question.answered { border-color: #1D9E75; }
+.question.answered.wrong { border-color: #E24B4A; }
+.q-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 1rem; }
+.q-num { background: #185FA5; color: #E6F1FB; border-radius: 50%; width: 28px; height: 28px; min-width: 28px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; }
+.q-text { font-size: 14px; color: var(--color-text-primary); line-height: 1.6; flex: 1; }
+.q-marks { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; white-space: nowrap; min-width: fit-content; }
+.q-type-badge { font-size: 11px; background: var(--color-background-info); color: var(--color-text-info); padding: 2px 8px; border-radius: var(--border-radius-md); margin-top: 6px; display: inline-block; }
+.options { display: flex; flex-direction: column; gap: 6px; margin-top: 0.75rem; }
+.option { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); cursor: pointer; font-size: 13px; color: var(--color-text-primary); transition: background 0.15s; }
+.option:hover { background: var(--color-background-secondary); }
+.option.selected { border-color: #185FA5; background: #E6F1FB; color: #0C447C; }
+.option.correct { border-color: #1D9E75; background: #E1F5EE; color: #085041; }
+.option.wrong { border-color: #E24B4A; background: #FCEBEB; color: #791F1F; }
+.option-letter { font-weight: 500; min-width: 18px; }
+textarea { width: 100%; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px; font-size: 13px; font-family: var(--font-sans); color: var(--color-text-primary); background: var(--color-background-primary); margin-top: 0.75rem; resize: vertical; min-height: 80px; line-height: 1.5; }
+textarea:focus { outline: none; border-color: #185FA5; }
+.table-q { margin-top: 0.75rem; }
+.table-q table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table-q th { background: var(--color-background-secondary); padding: 8px 12px; text-align: left; font-weight: 500; border: 0.5px solid var(--color-border-secondary); color: var(--color-text-secondary); font-size: 12px; }
+.table-q td { padding: 8px 12px; border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-primary); vertical-align: top; }
+.tick-cell { text-align: center; }
+.tick-input { width: 20px; height: 20px; cursor: pointer; }
+.feedback { font-size: 12px; margin-top: 0.75rem; padding: 8px 12px; border-radius: var(--border-radius-md); display: none; }
+.feedback.show { display: block; }
+.feedback.correct-fb { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
+.feedback.wrong-fb { background: #FCEBEB; color: #791F1F; border: 0.5px solid #F09595; }
+.submit-btn { display: block; margin: 0.75rem 0 0 auto; padding: 8px 20px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; cursor: pointer; color: var(--color-text-primary); }
+.submit-btn:hover { background: var(--color-background-secondary); }
+.nav-bar { position: sticky; top: 0; background: var(--color-background-primary); border-bottom: 0.5px solid var(--color-border-tertiary); padding: 0.75rem 0; margin-bottom: 1rem; display: flex; gap: 10px; align-items: center; z-index: 10; flex-wrap: wrap; }
+.nav-btn { padding: 6px 16px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); font-size: 13px; cursor: pointer; background: var(--color-background-primary); color: var(--color-text-primary); }
+.nav-btn.active { background: #185FA5; color: #E6F1FB; border-color: #185FA5; }
+.nav-btn:hover:not(.active) { background: var(--color-background-secondary); }
+.score-bar { flex: 1; text-align: right; font-size: 13px; color: var(--color-text-secondary); }
+.score-bar strong { color: var(--color-text-primary); font-size: 15px; }
+.results-panel { background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.5rem; margin: 2rem 0; display: none; }
+.results-panel.show { display: block; }
+.results-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-top: 1rem; }
+.result-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.75rem 1rem; text-align: center; }
+.result-card .val { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.result-card .lbl { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.section-tab { display: none; }
+.section-tab.active { display: block; }
+.marks-guide { font-size: 12px; color: var(--color-text-secondary); font-style: italic; margin-top: 0.5rem; }
+.diagram-box { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 1rem; margin-top: 0.75rem; background: var(--color-background-secondary); font-size: 13px; color: var(--color-text-secondary); }
+.label-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+.label-row input { flex: 1; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 5px 8px; font-size: 12px; background: var(--color-background-primary); color: var(--color-text-primary); }
+.label-row span { font-size: 12px; color: var(--color-text-secondary); min-width: 80px; }
+.check-group { display: flex; flex-direction: column; gap: 6px; margin-top: 0.75rem; }
+.check-item { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; cursor: pointer; color: var(--color-text-primary); }
+.check-item input { margin-top: 2px; }
+</style>
 
+<div style="padding: 1.5rem 0;">
+<div class="test-header">
+  <h1>International GCSE Biology — Section 1 Mock Examination</h1>
+  <p>Living organisms: variety and common features</p>
+  <div class="info-bar">
+    <div class="info-pill"><strong>Total marks:</strong> 120</div>
+    <div class="info-pill"><strong>Questions:</strong> 80+</div>
+    <div class="info-pill"><strong>Time allowed:</strong> 2 hours</div>
+    <div class="info-pill"><strong>Topics:</strong> 1.1 – 1.5</div>
+  </div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-btn active" onclick="showSection('s1')">1.1 Characteristics</button>
+  <button class="nav-btn" onclick="showSection('s2')">1.2 Variety</button>
+  <button class="nav-btn" onclick="showSection('s3')">1.3 Cells</button>
+  <button class="nav-btn" onclick="showSection('s4')">1.4 Molecules</button>
+  <button class="nav-btn" onclick="showSection('s5')">1.5 Movement</button>
+  <div class="score-bar">Score: <strong id="score-display">0 / 0</strong></div>
+</div>
+
+<!-- SECTION 1.1 -->
+<div id="s1" class="section-tab active">
+<div class="section-header">
+  <h2>Section 1.1 — Characteristics of living organisms</h2>
+  <p>Questions 1–18 &nbsp;|&nbsp; 22 marks</p>
+</div>
+
+<div class="question" id="q1">
+  <div class="q-header">
+    <div class="q-num">1</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is the correct definition of <em>nutrition</em> in living organisms?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q1','A')"><span class="option-letter">A</span> The process of releasing energy from glucose in cells</div>
+    <div class="option" onclick="mcq(this,'q1','B')"><span class="option-letter">B</span> The means of obtaining food that provides energy and molecules for living material</div>
+    <div class="option" onclick="mcq(this,'q1','C')"><span class="option-letter">C</span> The elimination of waste products from the body</div>
+    <div class="option" onclick="mcq(this,'q1','D')"><span class="option-letter">D</span> The process of breathing air into the lungs</div>
+  </div>
+  <div class="feedback" id="fb-q1"></div>
+</div>
+
+<div class="question" id="q2">
+  <div class="q-header">
+    <div class="q-num">2</div>
+    <div style="flex:1">
+      <div class="q-text">Green plants are described as <em>autotrophic</em>. Which statement best explains this term?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q2','A')"><span class="option-letter">A</span> They obtain food from a range of different sources</div>
+    <div class="option" onclick="mcq(this,'q2','B')"><span class="option-letter">B</span> They feed on decaying organic matter</div>
+    <div class="option" onclick="mcq(this,'q2','C')"><span class="option-letter">C</span> They build up their own food using energy from the Sun</div>
+    <div class="option" onclick="mcq(this,'q2','D')"><span class="option-letter">D</span> They absorb digested nutrients from other organisms</div>
+  </div>
+  <div class="feedback" id="fb-q2"></div>
+</div>
+
+<div class="question" id="q3">
+  <div class="q-header">
+    <div class="q-num">3</div>
+    <div style="flex:1">
+      <div class="q-text">Respiration must not be confused with breathing. Which of the following correctly describes respiration?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q3','A')"><span class="option-letter">A</span> The physical process of moving air into and out of the lungs</div>
+    <div class="option" onclick="mcq(this,'q3','B')"><span class="option-letter">B</span> The exchange of oxygen and carbon dioxide at the lung surface</div>
+    <div class="option" onclick="mcq(this,'q3','C')"><span class="option-letter">C</span> A series of chemical reactions in cells that release energy stored in glucose</div>
+    <div class="option" onclick="mcq(this,'q3','D')"><span class="option-letter">D</span> The transport of oxygen in red blood cells around the body</div>
+  </div>
+  <div class="feedback" id="fb-q3"></div>
+</div>
+
+<div class="question" id="q4">
+  <div class="q-header">
+    <div class="q-num">4</div>
+    <div style="flex:1">
+      <div class="q-text">A student confuses egestion with excretion. Which of the following correctly distinguishes them?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q4','A')"><span class="option-letter">A</span> Excretion removes undigested food; egestion removes metabolic waste</div>
+    <div class="option" onclick="mcq(this,'q4','B')"><span class="option-letter">B</span> Egestion removes faeces; excretion removes metabolic waste products such as urea</div>
+    <div class="option" onclick="mcq(this,'q4','C')"><span class="option-letter">C</span> Both egestion and excretion describe the removal of urea from the kidney</div>
+    <div class="option" onclick="mcq(this,'q4','D')"><span class="option-letter">D</span> Egestion and excretion are the same process in animals</div>
+  </div>
+  <div class="feedback" id="fb-q4"></div>
+</div>
+
+<div class="question" id="q5">
+  <div class="q-header">
+    <div class="q-num">5</div>
+    <div style="flex:1">
+      <div class="q-text">The term <em>homeostasis</em> refers to which of the following?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q5','A')"><span class="option-letter">A</span> The process by which organisms reproduce sexually</div>
+    <div class="option" onclick="mcq(this,'q5','B')"><span class="option-letter">B</span> The maintenance of a constant internal environment within required limits</div>
+    <div class="option" onclick="mcq(this,'q5','C')"><span class="option-letter">C</span> The growth and development from a zygote to an adult</div>
+    <div class="option" onclick="mcq(this,'q5','D')"><span class="option-letter">D</span> The movement of organisms from one habitat to another</div>
+  </div>
+  <div class="feedback" id="fb-q5"></div>
+</div>
+
+<div class="question" id="q6">
+  <div class="q-header">
+    <div class="q-num">6</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is an example of <em>asexual</em> reproduction?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q6','A')"><span class="option-letter">A</span> A flower producing seeds after pollination</div>
+    <div class="option" onclick="mcq(this,'q6','B')"><span class="option-letter">B</span> A microscopic organism dividing into two</div>
+    <div class="option" onclick="mcq(this,'q6','C')"><span class="option-letter">C</span> A male and female sex cell joining together</div>
+    <div class="option" onclick="mcq(this,'q6','D')"><span class="option-letter">D</span> The transfer of pollen between two plants</div>
+  </div>
+  <div class="feedback" id="fb-q6"></div>
+</div>
+
+<div class="question" id="q7">
+  <div class="q-header">
+    <div class="q-num">7</div>
+    <div style="flex:1">
+      <div class="q-text">State <strong>two</strong> differences in the way that plants and animals respond to stimuli in their environment. <span class="marks-guide">(Write your answer below)</span></div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Plants respond slowly by growing towards/away from stimuli (e.g. light/gravity). Animals respond quickly using a nervous system and muscles/receptors. Plants do not have a nervous system or receptors. Animals can move their whole body (locomotion); plants usually only move parts of themselves.')">Show model answer</button>
+</div>
+
+<div class="question" id="q8">
+  <div class="q-header">
+    <div class="q-num">8</div>
+    <div style="flex:1">
+      <div class="q-text">The table below refers to processes carried out by living organisms. Complete the table by ticking the correct boxes.</div>
+      <span class="q-type-badge">Table completion</span>
+    </div>
+    <div class="q-marks">[4]</div>
+  </div>
+  <div class="table-q">
+    <table>
+      <tr><th>Process / Statement</th><th style="text-align:center">Plants only</th><th style="text-align:center">Animals only</th><th style="text-align:center">Both</th></tr>
+      <tr><td>Release energy from glucose using oxygen</td><td class="tick-cell"><input type="checkbox"></td><td class="tick-cell"><input type="checkbox"></td><td class="tick-cell"><input type="checkbox"></td></tr>
+      <tr><td>Synthesise sugars using energy from sunlight</td><td class="tick-cell"><input type="checkbox"></td><td class="tick-cell"><input type="checkbox"></td><td class="tick-cell"><input type="checkbox"></td></tr>
+      <tr><td>Use muscles to move from place to place</td><td class="tick-cell"><input type="checkbox"></td><td class="tick-cell"><input type="checkbox"></td><td class="tick-cell"><input type="checkbox"></td></tr>
+      <tr><td>Excrete nitrogenous waste from protein breakdown</td><td class="tick-cell"><input type="checkbox"></td><td class="tick-cell"><input type="checkbox"></td><td class="tick-cell"><input type="checkbox"></td></tr>
+    </table>
+  </div>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Row 1: Both ✓ | Row 2: Plants only ✓ | Row 3: Animals only ✓ | Row 4: Animals only ✓')">Show answers</button>
+</div>
+
+<div class="question" id="q9">
+  <div class="q-header">
+    <div class="q-num">9</div>
+    <div style="flex:1">
+      <div class="q-text">Explain why the stomata of a plant leaf may close on a very hot, dry day and describe the effect this has on the leaf temperature.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Stomata close to prevent further water loss / to conserve water [1]\n• This is because the plant is losing a lot of water by evaporation from leaves (transpiration) and may wilt if more is lost [1]\n• When stomata are open, evaporation of water cools the leaf (similar to sweating); closing the stomata means the leaf cannot cool itself as effectively, so leaf temperature rises [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q10">
+  <div class="q-header">
+    <div class="q-num">10</div>
+    <div style="flex:1">
+      <div class="q-text">Which row of the table correctly matches the characteristic to its description?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q10','A')"><span class="option-letter">A</span> Excretion — the removal of undigested food from the gut as faeces</div>
+    <div class="option" onclick="mcq(this,'q10','B')"><span class="option-letter">B</span> Respiration — the physical movement of air into and out of the lungs</div>
+    <div class="option" onclick="mcq(this,'q10','C')"><span class="option-letter">C</span> Reproduction — the production of offspring to continue the species</div>
+    <div class="option" onclick="mcq(this,'q10','D')"><span class="option-letter">D</span> Nutrition — the elimination of toxic metabolic waste products</div>
+  </div>
+  <div class="feedback" id="fb-q10"></div>
+</div>
+
+<div class="question" id="q11">
+  <div class="q-header">
+    <div class="q-num">11</div>
+    <div style="flex:1">
+      <div class="q-text">In sexual reproduction, a new individual begins as a single fertilised egg cell called a <em>zygote</em>. State the name of the molecule that controls the characteristics of the offspring and explain how it is passed from parents to offspring.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• The molecule is DNA [1]\n• The offspring receives some DNA from the male parent (in sperm) and some from the female parent (in egg cell) [1]\n• This DNA is contained in the chromosomes within the nucleus and determines the characteristics of the offspring [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q12">
+  <div class="q-header">
+    <div class="q-num">12</div>
+    <div style="flex:1">
+      <div class="q-text">An alien scientist observes a crystal of salt growing in size. The scientist suggests that the salt crystal must be alive because it shows growth. Evaluate this suggestion, referring to at least <strong>three</strong> other characteristics of living organisms.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[4]</div>
+  </div>
+  <textarea style="min-height:110px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'The suggestion is incorrect / growth alone is not sufficient evidence of life [1]. To be considered living, an organism must show ALL characteristics. The salt crystal does NOT:\n• Carry out nutrition / obtain food for energy [1]\n• Carry out respiration / release energy from food [1]\n• Reproduce / make copies of itself [1]\n• Respond to stimuli in its environment [1]\n• Excrete metabolic waste products [1]\n(any 3 of the above for full marks)')">Show model answer</button>
+</div>
+
+<div class="question" id="q13">
+  <div class="q-header">
+    <div class="q-num">13</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following statements about movement in living organisms is <strong>correct</strong>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q13','A')"><span class="option-letter">A</span> Only animals are capable of movement</div>
+    <div class="option" onclick="mcq(this,'q13','B')"><span class="option-letter">B</span> Plants cannot move any of their parts</div>
+    <div class="option" onclick="mcq(this,'q13','C')"><span class="option-letter">C</span> All living organisms move in some way, though animals show locomotion more typically</div>
+    <div class="option" onclick="mcq(this,'q13','D')"><span class="option-letter">D</span> Locomotion is the only type of movement recognised in living organisms</div>
+  </div>
+  <div class="feedback" id="fb-q13"></div>
+</div>
+
+<div class="question" id="q14">
+  <div class="q-header">
+    <div class="q-num">14</div>
+    <div style="flex:1">
+      <div class="q-text">In humans, which waste product is produced when proteins are broken down, and through which organ is it eliminated?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q14','A')"><span class="option-letter">A</span> Carbon dioxide — eliminated through the lungs</div>
+    <div class="option" onclick="mcq(this,'q14','B')"><span class="option-letter">B</span> Urea — eliminated through the kidneys in urine</div>
+    <div class="option" onclick="mcq(this,'q14','C')"><span class="option-letter">C</span> Oxygen — eliminated through the skin</div>
+    <div class="option" onclick="mcq(this,'q14','D')"><span class="option-letter">D</span> Urea — eliminated through the liver in bile</div>
+  </div>
+  <div class="feedback" id="fb-q14"></div>
+</div>
+
+<div class="question" id="q15">
+  <div class="q-header">
+    <div class="q-num">15</div>
+    <div style="flex:1">
+      <div class="q-text">Animals are described as <em>heterotrophic</em>. Explain what this means and state how animals obtain energy compared to plants.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Heterotrophic means obtaining food from a range of different (external) sources [1]\n• Animals eat other organisms (plants or animals) and obtain energy from the complex molecules in food; they cannot make their own food from sunlight as plants do [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q16">
+  <div class="q-header">
+    <div class="q-num">16</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is <strong>not</strong> a characteristic shared by all living organisms?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q16','A')"><span class="option-letter">A</span> Reproduction</div>
+    <div class="option" onclick="mcq(this,'q16','B')"><span class="option-letter">B</span> Locomotion from place to place</div>
+    <div class="option" onclick="mcq(this,'q16','C')"><span class="option-letter">C</span> Excretion of waste products</div>
+    <div class="option" onclick="mcq(this,'q16','D')"><span class="option-letter">D</span> Response to stimuli</div>
+  </div>
+  <div class="feedback" id="fb-q16"></div>
+</div>
+
+<div class="question" id="q17">
+  <div class="q-header">
+    <div class="q-num">17</div>
+    <div style="flex:1">
+      <div class="q-text">Unlike animals, plants continue to grow throughout their lives. Give <strong>one</strong> example of new structures that flowering plants produce each year as part of this continued growth and development.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <textarea style="min-height:50px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Any one of: new shoots / new leaves / flowers / fruits / seeds [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q18">
+  <div class="q-header">
+    <div class="q-num">18</div>
+    <div style="flex:1">
+      <div class="q-text">ATP is described as an "energy battery" in cells. Explain the role of ATP in relation to respiration and cellular processes.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Energy released during respiration is transferred to ATP [1]\n• ATP stores this energy until it is needed to power processes (such as movement, protein synthesis, active transport) in the living cell [1]')">Show model answer</button>
+</div>
+</div>
+
+<!-- SECTION 1.2 -->
+<div id="s2" class="section-tab">
+<div class="section-header">
+  <h2>Section 1.2 — Variety of living organisms</h2>
+  <p>Questions 19–36 &nbsp;|&nbsp; 24 marks</p>
+</div>
+
+<div class="question" id="q19">
+  <div class="q-header">
+    <div class="q-num">19</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following groups of organisms are <em>prokaryotic</em>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q19','A')"><span class="option-letter">A</span> Fungi</div>
+    <div class="option" onclick="mcq(this,'q19','B')"><span class="option-letter">B</span> Protoctists</div>
+    <div class="option" onclick="mcq(this,'q19','C')"><span class="option-letter">C</span> Bacteria</div>
+    <div class="option" onclick="mcq(this,'q19','D')"><span class="option-letter">D</span> Plants</div>
+  </div>
+  <div class="feedback" id="fb-q19"></div>
+</div>
+
+<div class="question" id="q20">
+  <div class="q-header">
+    <div class="q-num">20</div>
+    <div style="flex:1">
+      <div class="q-text">Which statement about fungi is <strong>correct</strong>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q20','A')"><span class="option-letter">A</span> Fungi have cell walls made of cellulose</div>
+    <div class="option" onclick="mcq(this,'q20','B')"><span class="option-letter">B</span> Fungi carry out photosynthesis using chloroplasts</div>
+    <div class="option" onclick="mcq(this,'q20','C')"><span class="option-letter">C</span> Fungi feed by secreting extracellular enzymes and absorbing digested molecules</div>
+    <div class="option" onclick="mcq(this,'q20','D')"><span class="option-letter">D</span> All fungi are unicellular organisms</div>
+  </div>
+  <div class="feedback" id="fb-q20"></div>
+</div>
+
+<div class="question" id="q21">
+  <div class="q-header">
+    <div class="q-num">21</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following best describes <em>viruses</em>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q21','A')"><span class="option-letter">A</span> Single-celled organisms that carry out all characteristics of life</div>
+    <div class="option" onclick="mcq(this,'q21','B')"><span class="option-letter">B</span> Non-cellular particles consisting of a protein coat surrounding DNA or RNA that can only reproduce inside living cells</div>
+    <div class="option" onclick="mcq(this,'q21','C')"><span class="option-letter">C</span> Prokaryotic cells with circular chromosomes but no nucleus</div>
+    <div class="option" onclick="mcq(this,'q21','D')"><span class="option-letter">D</span> Eukaryotic organisms that feed by absorbing nutrients through their cell walls</div>
+  </div>
+  <div class="feedback" id="fb-q21"></div>
+</div>
+
+<div class="question" id="q22">
+  <div class="q-header">
+    <div class="q-num">22</div>
+    <div style="flex:1">
+      <div class="q-text">The table below lists features of different groups of organisms. Complete the table by writing the correct group name in the space provided.</div>
+      <span class="q-type-badge">Table completion</span>
+    </div>
+    <div class="q-marks">[4]</div>
+  </div>
+  <div class="table-q">
+    <table>
+      <tr><th>Features</th><th>Group name</th></tr>
+      <tr><td>Eukaryotic; cannot photosynthesise; cell walls made of chitin; body made of hyphae; feeds by extracellular digestion</td><td><input type="text" placeholder="..."></td></tr>
+      <tr><td>Prokaryotic; no nucleus; single circular chromosome; some carry out photosynthesis; can be rod-shaped or spherical</td><td><input type="text" placeholder="..."></td></tr>
+      <tr><td>Eukaryotic; multicellular; contain chloroplasts; have cellulose cell walls; store carbohydrates as starch</td><td><input type="text" placeholder="..."></td></tr>
+      <tr><td>Non-cellular; protein coat surrounding genetic material; all are parasitic; can only reproduce inside a host cell</td><td><input type="text" placeholder="..."></td></tr>
+    </table>
+  </div>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Row 1: Fungi | Row 2: Bacteria | Row 3: Plants | Row 4: Viruses')">Show answers</button>
+</div>
+
+<div class="question" id="q23">
+  <div class="q-header">
+    <div class="q-num">23</div>
+    <div style="flex:1">
+      <div class="q-text">Give <strong>two</strong> reasons why viruses are often not included in a biological classification of living organisms.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Viruses lack a cellular structure / are non-cellular [1]\n• They do not carry out most characteristics of living organisms (e.g. respiration, nutrition, excretion) — they can only reproduce [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q24">
+  <div class="q-header">
+    <div class="q-num">24</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is a feature found in <em>animal</em> cells but <strong>not</strong> in plant cells?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q24','A')"><span class="option-letter">A</span> Cell membrane</div>
+    <div class="option" onclick="mcq(this,'q24','B')"><span class="option-letter">B</span> Nucleus</div>
+    <div class="option" onclick="mcq(this,'q24','C')"><span class="option-letter">C</span> Nervous coordination</div>
+    <div class="option" onclick="mcq(this,'q24','D')"><span class="option-letter">D</span> Mitochondria</div>
+  </div>
+  <div class="feedback" id="fb-q24"></div>
+</div>
+
+<div class="question" id="q25">
+  <div class="q-header">
+    <div class="q-num">25</div>
+    <div style="flex:1">
+      <div class="q-text">Plasmodium, the organism that causes malaria, belongs to which group?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q25','A')"><span class="option-letter">A</span> Bacteria</div>
+    <div class="option" onclick="mcq(this,'q25','B')"><span class="option-letter">B</span> Fungi</div>
+    <div class="option" onclick="mcq(this,'q25','C')"><span class="option-letter">C</span> Protoctists</div>
+    <div class="option" onclick="mcq(this,'q25','D')"><span class="option-letter">D</span> Viruses</div>
+  </div>
+  <div class="feedback" id="fb-q25"></div>
+</div>
+
+<div class="question" id="q26">
+  <div class="q-header">
+    <div class="q-num">26</div>
+    <div style="flex:1">
+      <div class="q-text">The body of most fungi is made up of thread-like structures. State the names of these structures and the collective term for the network they form.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea style="min-height:55px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• The thread-like structures are called hyphae [1]\n• The network they form is called a mycelium [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q27">
+  <div class="q-header">
+    <div class="q-num">27</div>
+    <div style="flex:1">
+      <div class="q-text">Describe <strong>three</strong> structural differences between a prokaryotic bacterial cell and a eukaryotic plant cell.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Bacteria have no nucleus (DNA lies free in cytoplasm as a circular chromosome); plant cells have a membrane-bound nucleus [1]\n• Bacteria are much smaller (thousand-fold smaller volume) than plant cells [1]\n• Bacteria have no membrane-bound organelles (no mitochondria, no chloroplasts); plant cells have mitochondria and may have chloroplasts [1]\n• Bacteria have plasmids (small circular DNA); plant cells do not [1]\n(any 3)')">Show model answer</button>
+</div>
+
+<div class="question" id="q28">
+  <div class="q-header">
+    <div class="q-num">28</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following carbohydrates is stored in animal cells and in the cells of some fungi?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q28','A')"><span class="option-letter">A</span> Cellulose</div>
+    <div class="option" onclick="mcq(this,'q28','B')"><span class="option-letter">B</span> Starch</div>
+    <div class="option" onclick="mcq(this,'q28','C')"><span class="option-letter">C</span> Sucrose</div>
+    <div class="option" onclick="mcq(this,'q28','D')"><span class="option-letter">D</span> Glycogen</div>
+  </div>
+  <div class="feedback" id="fb-q28"></div>
+</div>
+
+<div class="question" id="q29">
+  <div class="q-header">
+    <div class="q-num">29</div>
+    <div style="flex:1">
+      <div class="q-text">The term <em>pathogen</em> is used to describe certain microorganisms. State what is meant by a pathogen and give <strong>one</strong> named example from each of the following groups: bacteria, fungi, viruses.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[4]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• A pathogen is a microorganism that causes disease [1]\n• Bacteria example: e.g. Streptococcus (causes throat infections) / Salmonella / Mycobacterium tuberculosis [1]\n• Fungi example: e.g. Tinea (athlete\'s foot) / Candida / Aspergillus [1]\n• Virus example: e.g. Influenza virus / HIV / Tobacco mosaic virus [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q30">
+  <div class="q-header">
+    <div class="q-num">30</div>
+    <div style="flex:1">
+      <div class="q-text">Amoeba belongs to the protoctist group. Which of the following statements about Amoeba is <strong>correct</strong>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q30','A')"><span class="option-letter">A</span> Amoeba is multicellular and contains chloroplasts</div>
+    <div class="option" onclick="mcq(this,'q30','B')"><span class="option-letter">B</span> Amoeba is single-celled with features similar to animal cells</div>
+    <div class="option" onclick="mcq(this,'q30','C')"><span class="option-letter">C</span> Amoeba is a prokaryote with no nucleus</div>
+    <div class="option" onclick="mcq(this,'q30','D')"><span class="option-letter">D</span> Amoeba has a cell wall made of cellulose</div>
+  </div>
+  <div class="feedback" id="fb-q30"></div>
+</div>
+
+<div class="question" id="q31">
+  <div class="q-header">
+    <div class="q-num">31</div>
+    <div style="flex:1">
+      <div class="q-text">Explain the difference between a <em>saprobiont</em> and a <em>parasite</em> in bacteria, giving a named example of each type if possible.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• A saprobiont feeds on dead / decaying organic matter [1]\n• A parasite feeds on (and harms) a living host organism [1]\n(Named examples are a bonus — not required for full marks at this level)')">Show model answer</button>
+</div>
+
+<div class="question" id="q32">
+  <div class="q-header">
+    <div class="q-num">32</div>
+    <div style="flex:1">
+      <div class="q-text">HIV and influenza are both viruses, yet they cause very different diseases. Both viruses consist of the same basic components. State the <strong>two</strong> components found in all viruses.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea style="min-height:55px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• A protein coat [1]\n• Genetic material — either DNA or RNA [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q33">
+  <div class="q-header">
+    <div class="q-num">33</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following correctly describes an eukaryotic organism?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q33','A')"><span class="option-letter">A</span> Cells that have no nucleus and contain a circular chromosome in the cytoplasm</div>
+    <div class="option" onclick="mcq(this,'q33','B')"><span class="option-letter">B</span> Cells that contain a nucleus with a distinct membrane and may be multicellular or single-celled</div>
+    <div class="option" onclick="mcq(this,'q33','C')"><span class="option-letter">C</span> Non-cellular particles that can reproduce only inside a host</div>
+    <div class="option" onclick="mcq(this,'q33','D')"><span class="option-letter">D</span> Cells that are always much smaller than prokaryotic cells</div>
+  </div>
+  <div class="feedback" id="fb-q33"></div>
+</div>
+
+<div class="question" id="q34">
+  <div class="q-header">
+    <div class="q-num">34</div>
+    <div style="flex:1">
+      <div class="q-text">Suggest why modern DNA studies can cause scientists to change existing classification systems. Give <strong>one</strong> reason.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <textarea style="min-height:55px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'DNA comparisons may reveal that organisms previously grouped together based on physical features are not closely related / that organisms that look different share a recent common ancestor, so the classification must be updated to reflect evolutionary relationships more accurately [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q35">
+  <div class="q-header">
+    <div class="q-num">35</div>
+    <div style="flex:1">
+      <div class="q-text">The Tobacco mosaic virus (TMV) prevents the formation of chloroplasts in plants. Explain <strong>two</strong> consequences of this for the infected plant.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• The plant cannot carry out photosynthesis (or its rate is greatly reduced) [1]\n• Therefore the plant cannot produce its own sugars/food and growth will be stunted / the plant may die without sufficient energy [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q36">
+  <div class="q-header">
+    <div class="q-num">36</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following organisms is classified in the <em>protoctist</em> group?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q36','A')"><span class="option-letter">A</span> Mucor</div>
+    <div class="option" onclick="mcq(this,'q36','B')"><span class="option-letter">B</span> Lactobacillus</div>
+    <div class="option" onclick="mcq(this,'q36','C')"><span class="option-letter">C</span> Chlorella</div>
+    <div class="option" onclick="mcq(this,'q36','D')"><span class="option-letter">D</span> Streptococcus</div>
+  </div>
+  <div class="feedback" id="fb-q36"></div>
+</div>
+</div>
+
+<!-- SECTION 1.3 -->
+<div id="s3" class="section-tab">
+<div class="section-header">
+  <h2>Section 1.3 — Cells and their organisation</h2>
+  <p>Questions 37–54 &nbsp;|&nbsp; 26 marks</p>
+</div>
+
+<div class="question" id="q37">
+  <div class="q-header">
+    <div class="q-num">37</div>
+    <div style="flex:1">
+      <div class="q-text">Which organelle is the site of aerobic respiration in both plant and animal cells?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q37','A')"><span class="option-letter">A</span> Chloroplast</div>
+    <div class="option" onclick="mcq(this,'q37','B')"><span class="option-letter">B</span> Ribosome</div>
+    <div class="option" onclick="mcq(this,'q37','C')"><span class="option-letter">C</span> Vacuole</div>
+    <div class="option" onclick="mcq(this,'q37','D')"><span class="option-letter">D</span> Mitochondrion</div>
+  </div>
+  <div class="feedback" id="fb-q37"></div>
+</div>
+
+<div class="question" id="q38">
+  <div class="q-header">
+    <div class="q-num">38</div>
+    <div style="flex:1">
+      <div class="q-text">Name the structures indicated in the diagram of a plant cell, using the labels provided below. Write the letter next to the correct label.</div>
+      <span class="q-type-badge">Labelling</span>
+    </div>
+    <div class="q-marks">[5]</div>
+  </div>
+  <div class="diagram-box">
+    <div style="font-size:13px; color: var(--color-text-secondary); margin-bottom:10px;">Match each letter (A–E) to the correct structure name:</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 13px; margin-bottom:10px;">
+      <div>A — controls entry/exit of substances into cell</div>
+      <div>B — contains chromosomes / genetic information</div>
+      <div>C — where photosynthesis reactions occur</div>
+      <div>D — provides strength and protection (made of cellulose)</div>
+      <div>E — filled with cell sap; pushes cytoplasm outward</div>
+    </div>
+    <div style="font-size:12px; color: var(--color-text-secondary);">Write your answers below:</div>
+    <div class="label-row"><span>A =</span><input type="text" placeholder="Structure name..."></div>
+    <div class="label-row"><span>B =</span><input type="text" placeholder="Structure name..."></div>
+    <div class="label-row"><span>C =</span><input type="text" placeholder="Structure name..."></div>
+    <div class="label-row"><span>D =</span><input type="text" placeholder="Structure name..."></div>
+    <div class="label-row"><span>E =</span><input type="text" placeholder="Structure name..."></div>
+  </div>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'A = Cell membrane | B = Nucleus | C = Chloroplast | D = Cell wall | E = Vacuole')">Show answers</button>
+</div>
+
+<div class="question" id="q39">
+  <div class="q-header">
+    <div class="q-num">39</div>
+    <div style="flex:1">
+      <div class="q-text">The table below shows features of plant and animal cells. Complete the table by ticking whether each feature is present (✓) or absent (✗) in each cell type.</div>
+      <span class="q-type-badge">Table completion</span>
+    </div>
+    <div class="q-marks">[5]</div>
+  </div>
+  <div class="table-q">
+    <table>
+      <tr><th>Feature</th><th style="text-align:center">Plant cell</th><th style="text-align:center">Animal cell</th></tr>
+      <tr><td>Cellulose cell wall</td><td class="tick-cell"><input type="checkbox" title="present"></td><td class="tick-cell"><input type="checkbox" title="present"></td></tr>
+      <tr><td>Nucleus</td><td class="tick-cell"><input type="checkbox" title="present"></td><td class="tick-cell"><input type="checkbox" title="present"></td></tr>
+      <tr><td>Chloroplasts (in all cells)</td><td class="tick-cell"><input type="checkbox" title="present"></td><td class="tick-cell"><input type="checkbox" title="present"></td></tr>
+      <tr><td>Large central vacuole</td><td class="tick-cell"><input type="checkbox" title="present"></td><td class="tick-cell"><input type="checkbox" title="present"></td></tr>
+      <tr><td>Mitochondria</td><td class="tick-cell"><input type="checkbox" title="present"></td><td class="tick-cell"><input type="checkbox" title="present"></td></tr>
+    </table>
+  </div>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Cellulose cell wall: Plant ✓, Animal ✗ | Nucleus: Plant ✓, Animal ✓ | Chloroplasts (in all cells): Plant ✗ (not in all cells e.g. roots), Animal ✗ | Large central vacuole: Plant ✓, Animal ✗ | Mitochondria: Plant ✓, Animal ✓')">Show answers</button>
+</div>
+
+<div class="question" id="q40">
+  <div class="q-header">
+    <div class="q-num">40</div>
+    <div style="flex:1">
+      <div class="q-text">The correct sequence of levels of organisation in a multicellular organism, from smallest to largest, is:</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q40','A')"><span class="option-letter">A</span> Organ → tissue → cell → organelle → system</div>
+    <div class="option" onclick="mcq(this,'q40','B')"><span class="option-letter">B</span> Organelle → cell → tissue → organ → system</div>
+    <div class="option" onclick="mcq(this,'q40','C')"><span class="option-letter">C</span> Cell → organelle → tissue → system → organ</div>
+    <div class="option" onclick="mcq(this,'q40','D')"><span class="option-letter">D</span> System → organ → tissue → cell → organelle</div>
+  </div>
+  <div class="feedback" id="fb-q40"></div>
+</div>
+
+<div class="question" id="q41">
+  <div class="q-header">
+    <div class="q-num">41</div>
+    <div style="flex:1">
+      <div class="q-text">Explain the function of <em>ribosomes</em> in a cell.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <textarea style="min-height:50px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Ribosomes are responsible for the synthesis (production) of proteins, including enzymes, as directed by genes in the nucleus [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q42">
+  <div class="q-header">
+    <div class="q-num">42</div>
+    <div style="flex:1">
+      <div class="q-text">A red blood cell has no nucleus. Explain why this is an advantage for its function of carrying oxygen.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Without a nucleus, there is more space inside the red blood cell to contain haemoglobin [1]\n• This allows the cell to carry more oxygen / be more efficient at oxygen transport [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q43">
+  <div class="q-header">
+    <div class="q-num">43</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following correctly defines a <em>tissue</em>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q43','A')"><span class="option-letter">A</span> A single specialised cell carrying out one function</div>
+    <div class="option" onclick="mcq(this,'q43','B')"><span class="option-letter">B</span> A group of different organs working together</div>
+    <div class="option" onclick="mcq(this,'q43','C')"><span class="option-letter">C</span> A collection of similar cells carrying out a particular function within an organ</div>
+    <div class="option" onclick="mcq(this,'q43','D')"><span class="option-letter">D</span> A collection of different tissues performing a common function</div>
+  </div>
+  <div class="feedback" id="fb-q43"></div>
+</div>
+
+<div class="question" id="q44">
+  <div class="q-header">
+    <div class="q-num">44</div>
+    <div style="flex:1">
+      <div class="q-text">State <strong>two</strong> ways in which a root hair cell is adapted for its function of absorbing water from the soil.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• The elongated hair-like extension greatly increases the surface area for absorption [1]\n• The thin cell wall and membrane allow water to move across easily by osmosis [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q45">
+  <div class="q-header">
+    <div class="q-num">45</div>
+    <div style="flex:1">
+      <div class="q-text">Stem cells are described as <em>totipotent</em> in the early embryo. Explain what this means.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Totipotent means the cell has the potential to differentiate into any kind of specialised cell in the adult body [1]\n• The initial pathway of development can be switched to any other — the cell is not yet committed to a fixed cell type [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q46">
+  <div class="q-header">
+    <div class="q-num">46</div>
+    <div style="flex:1">
+      <div class="q-text">Stem cell therapy involves injecting stem cells into damaged tissue. State <strong>one</strong> risk and <strong>one</strong> benefit of this treatment.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Benefit: stem cells divide and differentiate to replace damaged/dead cells, restoring organ function [1]\n• Risk: if stem cells do not respond to natural chemical signals and continue to divide uncontrollably, they could cause cancer [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q47">
+  <div class="q-header">
+    <div class="q-num">47</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is the correct function of the cell membrane?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q47','A')"><span class="option-letter">A</span> It provides structural rigidity and protection to the cell</div>
+    <div class="option" onclick="mcq(this,'q47','B')"><span class="option-letter">B</span> It controls which materials enter and leave the cell</div>
+    <div class="option" onclick="mcq(this,'q47','C')"><span class="option-letter">C</span> It is the site of protein synthesis</div>
+    <div class="option" onclick="mcq(this,'q47','D')"><span class="option-letter">D</span> It stores the genetic information of the cell</div>
+  </div>
+  <div class="feedback" id="fb-q47"></div>
+</div>
+
+<div class="question" id="q48">
+  <div class="q-header">
+    <div class="q-num">48</div>
+    <div style="flex:1">
+      <div class="q-text">A student makes a slide of a moss leaf to observe under the microscope. Describe <strong>two</strong> features they would expect to observe inside the moss leaf cells.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Green chloroplasts / chloroplasts that give the cells their green colour [1]\n• A cell wall / nucleus / vacuole [1] (any valid observable structure for second mark)')">Show model answer</button>
+</div>
+
+<div class="question" id="q49">
+  <div class="q-header">
+    <div class="q-num">49</div>
+    <div style="flex:1">
+      <div class="q-text">Which level of organisation does the <em>retina</em> of the eye represent?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q49','A')"><span class="option-letter">A</span> Organelle</div>
+    <div class="option" onclick="mcq(this,'q49','B')"><span class="option-letter">B</span> Tissue</div>
+    <div class="option" onclick="mcq(this,'q49','C')"><span class="option-letter">C</span> Organ</div>
+    <div class="option" onclick="mcq(this,'q49','D')"><span class="option-letter">D</span> System</div>
+  </div>
+  <div class="feedback" id="fb-q49"></div>
+</div>
+
+<div class="question" id="q50">
+  <div class="q-header">
+    <div class="q-num">50</div>
+    <div style="flex:1">
+      <div class="q-text">Explain why iodine solution is used when making a slide to observe starch in potato cells, and describe the result expected.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Iodine solution is used because it is a chemical indicator that reacts with starch [1]\n• When starch is present, the iodine solution turns from pale yellow to blue-black, making the starch grains inside the cells visible [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q51">
+  <div class="q-header">
+    <div class="q-num">51</div>
+    <div style="flex:1">
+      <div class="q-text">Describe what is meant by <em>cell differentiation</em> and explain the role of genes in this process.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Cell differentiation is the process by which a cell becomes specialised to carry out a particular function [1]\n• As new cells are produced, specific genes are switched on (active) and off (inactive) inside each cell [1]\n• This pattern of active/inactive genes causes the cell to develop along a particular pathway into one of the specialised cell types (e.g. red blood cell, nerve cell) [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q52">
+  <div class="q-header">
+    <div class="q-num">52</div>
+    <div style="flex:1">
+      <div class="q-text">The human body contains approximately how many different types of cells?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q52','A')"><span class="option-letter">A</span> 25</div>
+    <div class="option" onclick="mcq(this,'q52','B')"><span class="option-letter">B</span> 100</div>
+    <div class="option" onclick="mcq(this,'q52','C')"><span class="option-letter">C</span> 250</div>
+    <div class="option" onclick="mcq(this,'q52','D')"><span class="option-letter">D</span> 2500</div>
+  </div>
+  <div class="feedback" id="fb-q52"></div>
+</div>
+
+<div class="question" id="q53">
+  <div class="q-header">
+    <div class="q-num">53</div>
+    <div style="flex:1">
+      <div class="q-text">Suggest one ethical issue associated with using human embryos as a source of stem cells for medical treatment.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <textarea style="min-height:55px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Embryos are destroyed in the process, which many consider unethical as they represent potential human life [1] OR: it is considered unethical to create an embryo specifically in order to use it for medical research/treatment [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q54">
+  <div class="q-header">
+    <div class="q-num">54</div>
+    <div style="flex:1">
+      <div class="q-text">A student prepares a slide of human cheek cells and stains them with methylene blue. Describe <strong>three</strong> features they would expect to observe in these cells and explain why each feature is visible.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Nucleus — visible as a darker, denser region; contains genetic material / chromosomes [1]\n• Cell membrane — thin outer boundary visible at edge of cell; controls entry/exit of substances [1]\n• Cytoplasm — the body of the cell; site of many chemical reactions / contains organelles [1]\n• Mitochondria — small sausage-shaped structures scattered in cytoplasm; site of respiration [1]\n(any 3 with explanation)')">Show model answer</button>
+</div>
+</div>
+
+<!-- SECTION 1.4 -->
+<div id="s4" class="section-tab">
+<div class="section-header">
+  <h2>Section 1.4 — Biological molecules and enzymes</h2>
+  <p>Questions 55–70 &nbsp;|&nbsp; 24 marks</p>
+</div>
+
+<div class="question" id="q55">
+  <div class="q-header">
+    <div class="q-num">55</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following correctly lists the elements always found in <em>both</em> carbohydrates and proteins?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q55','A')"><span class="option-letter">A</span> Carbon, hydrogen, oxygen, nitrogen</div>
+    <div class="option" onclick="mcq(this,'q55','B')"><span class="option-letter">B</span> Carbon, hydrogen, oxygen</div>
+    <div class="option" onclick="mcq(this,'q55','C')"><span class="option-letter">C</span> Carbon, nitrogen, sulfur</div>
+    <div class="option" onclick="mcq(this,'q55','D')"><span class="option-letter">D</span> Hydrogen, oxygen, nitrogen, sulfur</div>
+  </div>
+  <div class="feedback" id="fb-q55"></div>
+</div>
+
+<div class="question" id="q56">
+  <div class="q-header">
+    <div class="q-num">56</div>
+    <div style="flex:1">
+      <div class="q-text">Starch is insoluble in water. Explain why this is an advantage for a plant storing glucose as starch rather than as free glucose molecules.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Starch being insoluble means it cannot be easily washed away / lost from the cell [1]\n• Starch has no osmotic effect (does not affect water concentration in the cell), so it does not draw water into the cell by osmosis and disrupt the cell [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q57">
+  <div class="q-header">
+    <div class="q-num">57</div>
+    <div style="flex:1">
+      <div class="q-text">The Benedict's test is used to detect glucose. Describe the procedure and the expected result when glucose is present.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Add Benedict\'s solution to the sample solution in a test tube [1]\n• Heat the mixture in a water bath / beaker of boiling water for 5 minutes [1]\n• A positive result is a colour change from blue to yellow/orange/brick red (reddish precipitate); the deeper the colour, the more glucose is present [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q58">
+  <div class="q-header">
+    <div class="q-num">58</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is the correct test for <em>protein</em>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q58','A')"><span class="option-letter">A</span> Add iodine solution — blue-black colour indicates protein present</div>
+    <div class="option" onclick="mcq(this,'q58','B')"><span class="option-letter">B</span> Add Benedict's solution and heat — brick red colour indicates protein present</div>
+    <div class="option" onclick="mcq(this,'q58','C')"><span class="option-letter">C</span> Add Biuret reagent — pink/violet colour indicates protein present</div>
+    <div class="option" onclick="mcq(this,'q58','D')"><span class="option-letter">D</span> Add ethanol then water — milky emulsion indicates protein present</div>
+  </div>
+  <div class="feedback" id="fb-q58"></div>
+</div>
+
+<div class="question" id="q59">
+  <div class="q-header">
+    <div class="q-num">59</div>
+    <div style="flex:1">
+      <div class="q-text">Lipids are made from <strong>two</strong> types of molecules joined together. State the names of these two types of molecules.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea style="min-height:50px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Glycerol [1] and fatty acids [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q60">
+  <div class="q-header">
+    <div class="q-num">60</div>
+    <div style="flex:1">
+      <div class="q-text">The graph below (described in words) shows enzyme activity against temperature for potato catalase and liver catalase. The liver catalase optimum is 35°C and potato catalase is 25°C. Both show decreased activity above their optimum. Explain, in terms of enzyme structure, why enzyme activity decreases at temperatures above the optimum.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• At high temperatures, the shape of the enzyme molecule becomes distorted [1]\n• The active site changes shape so the substrate can no longer fit / bind to the active site [1]\n• The enzyme is denatured — this process is irreversible, so the enzyme cannot catalyse the reaction even if the temperature is lowered again [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q61">
+  <div class="q-header">
+    <div class="q-num">61</div>
+    <div style="flex:1">
+      <div class="q-text">What is meant by the term <em>active site</em> of an enzyme?</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• The active site is a specific region / fold on the surface of the enzyme molecule [1]\n• It has a precise shape that fits only one particular substrate (like a lock and key) — this is where the substrate binds and the reaction is catalysed [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q62">
+  <div class="q-header">
+    <div class="q-num">62</div>
+    <div style="flex:1">
+      <div class="q-text">Salivary amylase works at pH 7.5, while pepsin (a stomach enzyme) works at pH 2. Explain why each enzyme is inactive outside its optimum pH range.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Outside the optimum pH, the shape of the active site becomes distorted [1]\n• The substrate no longer fits the active site — the enzyme is denatured and cannot catalyse the reaction [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q63">
+  <div class="q-header">
+    <div class="q-num">63</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is the correct description of an enzyme?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q63','A')"><span class="option-letter">A</span> A carbohydrate that speeds up metabolic reactions without being used up</div>
+    <div class="option" onclick="mcq(this,'q63','B')"><span class="option-letter">B</span> A lipid that catalyses reactions at high temperatures only</div>
+    <div class="option" onclick="mcq(this,'q63','C')"><span class="option-letter">C</span> A protein that acts as a biological catalyst in metabolic reactions</div>
+    <div class="option" onclick="mcq(this,'q63','D')"><span class="option-letter">D</span> A nucleic acid that stores energy for cellular processes</div>
+  </div>
+  <div class="feedback" id="fb-q63"></div>
+</div>
+
+<div class="question" id="q64">
+  <div class="q-header">
+    <div class="q-num">64</div>
+    <div style="flex:1">
+      <div class="q-text">State the molecular formula of glucose and identify the ratio of carbon to hydrogen to oxygen atoms in this formula.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea style="min-height:50px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Molecular formula: C₆H₁₂O₆ [1]\n• The ratio is 1C : 2H : 1O [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q65">
+  <div class="q-header">
+    <div class="q-num">65</div>
+    <div style="flex:1">
+      <div class="q-text">Describe the emulsion test for fat (lipids) in a food sample, including the reagents used and the expected results.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Grind food sample and add ethanol; shake well and allow to settle [1]\n• Strain the ethanol layer into a test tube and add water [1]\n• A positive result (lipid present) is a milky/cloudy white emulsion; a negative result is a clear solution [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q66">
+  <div class="q-header">
+    <div class="q-num">66</div>
+    <div style="flex:1">
+      <div class="q-text">Cellulose is a polysaccharide found in plant cell walls. State <strong>two</strong> properties of cellulose that make it suitable for this role.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea style="min-height:55px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Cellulose fibres are strong / resist forces that could change the shape of the cell [1]\n• Cellulose forms twisted interlinking chains that wrap around the cell, providing support and protection [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q67">
+  <div class="q-header">
+    <div class="q-num">67</div>
+    <div style="flex:1">
+      <div class="q-text">Water makes up approximately 70% of the mass of a human living cell. State <strong>three</strong> roles of water in living organisms.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Any three of:\n• Solvent — substances dissolve in water inside cells and transport systems [1]\n• Reactant — water is involved in hydrolysis (breaking down large molecules) and photosynthesis reactions [1]\n• Lubricant — e.g. in peristalsis [1]\n• Transport medium — water forms the basis of blood and other fluids [1]\n• Cooling — evaporation of water from leaves (transpiration) cools the plant [1]\n• Support — water in cell vacuoles keeps plant cells turgid, supporting plant tissues [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q68">
+  <div class="q-header">
+    <div class="q-num">68</div>
+    <div style="flex:1">
+      <div class="q-text">A student investigates the effect of temperature on amylase activity using a starch solution and iodine solution on a dimple tile. They record the time for the starch to disappear at different temperatures. State <strong>two</strong> variables the student must keep constant to make this a fair test.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea style="min-height:55px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Any two of: volume/concentration of amylase solution [1] / volume/concentration of starch solution [1] / pH of the solution [1] / time interval between testing drops [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q69">
+  <div class="q-header">
+    <div class="q-num">69</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is a <em>disaccharide</em>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q69','A')"><span class="option-letter">A</span> Glucose</div>
+    <div class="option" onclick="mcq(this,'q69','B')"><span class="option-letter">B</span> Sucrose</div>
+    <div class="option" onclick="mcq(this,'q69','C')"><span class="option-letter">C</span> Starch</div>
+    <div class="option" onclick="mcq(this,'q69','D')"><span class="option-letter">D</span> Glycogen</div>
+  </div>
+  <div class="feedback" id="fb-q69"></div>
+</div>
+
+<div class="question" id="q70">
+  <div class="q-header">
+    <div class="q-num">70</div>
+    <div style="flex:1">
+      <div class="q-text">Explain why proteins are described as having an enormous variety despite being made from only 20 amino acids.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Each different protein has a unique sequence of amino acids linked together in a chain [1]\n• The chain is folded and twisted into a specific 3D shape — different sequences give different shapes and therefore different biological properties/functions [1]')">Show model answer</button>
+</div>
+</div>
+
+<!-- SECTION 1.5 -->
+<div id="s5" class="section-tab">
+<div class="section-header">
+  <h2>Section 1.5 — Movement of substances into and out of cells</h2>
+  <p>Questions 71–85+ &nbsp;|&nbsp; 24 marks</p>
+</div>
+
+<div class="question" id="q71">
+  <div class="q-header">
+    <div class="q-num">71</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following is the correct definition of <em>diffusion</em>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q71','A')"><span class="option-letter">A</span> The net movement of water molecules through a partially permeable membrane from a dilute to a concentrated solution</div>
+    <div class="option" onclick="mcq(this,'q71','B')"><span class="option-letter">B</span> The net movement of molecules from a region of higher to a region of lower concentration</div>
+    <div class="option" onclick="mcq(this,'q71','C')"><span class="option-letter">C</span> The movement of molecules against a concentration gradient using energy from ATP</div>
+    <div class="option" onclick="mcq(this,'q71','D')"><span class="option-letter">D</span> The movement of water from a more concentrated to a more dilute solution</div>
+  </div>
+  <div class="feedback" id="fb-q71"></div>
+</div>
+
+<div class="question" id="q72">
+  <div class="q-header">
+    <div class="q-num">72</div>
+    <div style="flex:1">
+      <div class="q-text">Osmosis is a special case of diffusion. State <strong>two</strong> ways in which osmosis differs from simple diffusion.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Osmosis specifically involves the movement of water molecules only (diffusion can involve any molecules/ions) [1]\n• Osmosis requires a partially permeable membrane to be present (simple diffusion does not require a membrane) [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q73">
+  <div class="q-header">
+    <div class="q-num">73</div>
+    <div style="flex:1">
+      <div class="q-text">Red blood cells are placed in pure water. Describe and explain what happens to the cells.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Water moves into the red blood cells by osmosis [1]\n• This is because the pure water has a higher water potential / higher concentration of water molecules than the cell contents [1]\n• The cells swell up and eventually burst (lyse) because there is no cell wall to resist the pressure / provide a counter-pressure [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q74">
+  <div class="q-header">
+    <div class="q-num">74</div>
+    <div style="flex:1">
+      <div class="q-text">A plant cell is placed in a concentrated salt solution. Describe what happens to the cell membrane and the contents of the cell. Name this process.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Water moves out of the cell by osmosis (because the salt solution has a lower water potential) [1]\n• The cell contents shrink / the cytoplasm decreases in volume; the cell membrane peels away from the cell wall [1]\n• The cell becomes flaccid / plasmolysed; this process is called plasmolysis [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q75">
+  <div class="q-header">
+    <div class="q-num">75</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following correctly describes <em>active transport</em>?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q75','A')"><span class="option-letter">A</span> Movement of molecules down a concentration gradient, requiring no energy</div>
+    <div class="option" onclick="mcq(this,'q75','B')"><span class="option-letter">B</span> Movement of water molecules through a partially permeable membrane</div>
+    <div class="option" onclick="mcq(this,'q75','C')"><span class="option-letter">C</span> Movement of molecules against a concentration gradient, requiring energy from ATP</div>
+    <div class="option" onclick="mcq(this,'q75','D')"><span class="option-letter">D</span> Movement of large molecules through the membrane by breaking it apart</div>
+  </div>
+  <div class="feedback" id="fb-q75"></div>
+</div>
+
+<div class="question" id="q76">
+  <div class="q-header">
+    <div class="q-num">76</div>
+    <div style="flex:1">
+      <div class="q-text">Give <strong>one</strong> example of active transport in plants and <strong>one</strong> example in animals. For each, explain why active transport is necessary rather than diffusion.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[4]</div>
+  </div>
+  <textarea style="min-height:100px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Plant example: Mineral ions (e.g. nitrate) are absorbed into root hair cells from soil water [1]. Active transport is needed because the concentration of mineral ions is lower in the soil than inside the cell — they must move against the concentration gradient [1].\nAnimal example: Glucose is actively reabsorbed back into the blood from the kidney tubule filtrate [1]. Active transport is needed because glucose must move from the filtrate (lower concentration) into the blood (higher concentration) — against the gradient [1].')">Show model answer</button>
+</div>
+
+<div class="question" id="q77">
+  <div class="q-header">
+    <div class="q-num">77</div>
+    <div style="flex:1">
+      <div class="q-text">A student investigates osmosis in potato tissue. Cylinders of potato are placed in salt solutions of increasing concentration. Describe the expected result for cylinders placed in: (a) distilled water and (b) a very concentrated salt solution.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '(a) In distilled water: the potato cylinder gains mass / becomes turgid / feels firm, because water enters the cells by osmosis (the cell sap is more concentrated than the distilled water) [1]\n(b) In concentrated salt solution: the potato cylinder loses mass / becomes flaccid / feels soft, because water leaves the cells by osmosis into the surrounding solution [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q78">
+  <div class="q-header">
+    <div class="q-num">78</div>
+    <div style="flex:1">
+      <div class="q-text">State <strong>four</strong> factors that affect the rate of diffusion of molecules into and out of cells.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[4]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Surface area in relation to volume — larger surface area increases rate [1]\n• Distance molecules must travel — shorter distance increases rate [1]\n• Temperature — higher temperature increases rate (molecules have more kinetic energy) [1]\n• Concentration gradient — steeper gradient increases rate of net movement [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q79">
+  <div class="q-header">
+    <div class="q-num">79</div>
+    <div style="flex:1">
+      <div class="q-text">The table shows three cubes of agar jelly (A, B, C) with dimensions 2cm × 2cm × 2cm, 1cm × 1cm × 1cm, and 0.5cm × 0.5cm × 0.5cm respectively. Calculate the surface area : volume ratio for cube B (1cm³) and state which cube would allow fastest diffusion to its centre.</div>
+      <span class="q-type-badge">Maths / calculation</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your calculation here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Cube B (1cm sides):\n• Surface area = 1 × 1 × 6 = 6 cm² [1]\n• Volume = 1 × 1 × 1 = 1 cm³\n• SA:V ratio = 6:1\nCube C (0.5cm sides) has ratio 0.5×0.5×6 = 1.5 cm² surface / 0.5³ = 0.125 cm³ volume = 12:1\nCube C (smallest) would allow fastest diffusion to its centre because it has the largest surface area to volume ratio / shortest distance to the middle [1+1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q80">
+  <div class="q-header">
+    <div class="q-num">80</div>
+    <div style="flex:1">
+      <div class="q-text">A piece of beetroot is heated to 90°C in water. The water turns red. Explain why this happens, referring to the role of the cell membrane.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Heating above 45°C damages/destroys the cell membrane [1]\n• The red pigment molecules (which are too large to pass through an intact membrane) can now diffuse freely out of the cell into the surrounding water, turning it red [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q81">
+  <div class="q-header">
+    <div class="q-num">81</div>
+    <div style="flex:1">
+      <div class="q-text">In the lungs, oxygen diffuses from the air in the alveoli into the blood. State <strong>two</strong> adaptations of the lungs that maximise the rate of this diffusion.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'Any two of:\n• Very large total surface area (many alveoli) [1]\n• Thin walls — short diffusion distance [1]\n• Moist surface — gases dissolve in the moisture [1]\n• Rich blood supply (capillaries) constantly removes oxygen, maintaining the concentration gradient [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q82">
+  <div class="q-header">
+    <div class="q-num">82</div>
+    <div style="flex:1">
+      <div class="q-text">Which of the following correctly explains why single-celled organisms can obtain sufficient oxygen by simple diffusion, while large multicellular organisms cannot?</div>
+      <span class="q-type-badge">Multiple choice</span>
+    </div>
+    <div class="q-marks">[1]</div>
+  </div>
+  <div class="options">
+    <div class="option" onclick="mcq(this,'q82','A')"><span class="option-letter">A</span> Single-celled organisms need more oxygen per unit volume than multicellular organisms</div>
+    <div class="option" onclick="mcq(this,'q82','B')"><span class="option-letter">B</span> The distance from the outside surface to the centre of a single cell is only a few micrometres, so diffusion is fast enough; in large organisms this distance is too great</div>
+    <div class="option" onclick="mcq(this,'q82','C')"><span class="option-letter">C</span> Single-celled organisms have a smaller surface area to volume ratio than large organisms</div>
+    <div class="option" onclick="mcq(this,'q82','D')"><span class="option-letter">D</span> Large organisms have more mitochondria and do not need as much oxygen</div>
+  </div>
+  <div class="feedback" id="fb-q82"></div>
+</div>
+
+<div class="question" id="q83">
+  <div class="q-header">
+    <div class="q-num">83</div>
+    <div style="flex:1">
+      <div class="q-text">Explain the term <em>osmoregulation</em> and explain why it is important in the human body.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Osmoregulation is the control/maintenance of the correct water balance in the body fluids [1]\n• If blood becomes too dilute, too much water would pass into cells by osmosis — cells could swell and burst [1]\n• If blood becomes too concentrated (dehydration), water would pass out of cells by osmosis — cells would shrink and die [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q84">
+  <div class="q-header">
+    <div class="q-num">84</div>
+    <div style="flex:1">
+      <div class="q-text">Dialysis (Visking) tubing is used to demonstrate osmosis. A tube filled with concentrated sucrose solution is placed in a beaker of water. State what is observed and explain why.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[3]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• The level of liquid in the glass tube (above the tubing) rises [1]\n• Water moves from the beaker (high water potential / dilute) into the dialysis tube (low water potential / concentrated sucrose) by osmosis [1]\n• The dialysis tubing acts as a partially permeable membrane — water molecules can pass through but sucrose molecules are too large to cross [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q85">
+  <div class="q-header">
+    <div class="q-num">85</div>
+    <div style="flex:1">
+      <div class="q-text">A gardener plants tomato plants which are then covered by a wave of seawater. Later the plants wilt and become floppy. Use your knowledge of osmosis to explain this observation fully.</div>
+      <span class="q-type-badge">Extended writing</span>
+    </div>
+    <div class="q-marks">[4]</div>
+  </div>
+  <textarea style="min-height:100px;" placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, '• Seawater is a concentrated salt solution with a low water potential [1]\n• Water moves out of the plant cells by osmosis into the surrounding seawater (which has a higher concentration of solutes / lower water potential than the cell contents) [1]\n• The cells lose water and become flaccid / lose turgor pressure [1]\n• Without turgidity, the cells cannot support the plant tissue and the plant wilts / becomes floppy [1]')">Show model answer</button>
+</div>
+
+<div class="question" id="q86">
+  <div class="q-header">
+    <div class="q-num">86</div>
+    <div style="flex:1">
+      <div class="q-text">Explain why maintaining a concentration gradient increases the rate of diffusion, using an example from either a plant leaf or the human lung.</div>
+      <span class="q-type-badge">Short answer</span>
+    </div>
+    <div class="q-marks">[2]</div>
+  </div>
+  <textarea placeholder="Write your answer here..."></textarea>
+  <button class="submit-btn" onclick="showModelAnswer(this, 'A larger difference in concentration means the net movement of molecules from high to low concentration is faster [1]. Example: In the lungs, blood constantly flowing through capillaries removes oxygen — this keeps the oxygen concentration in the blood low, maintaining a steep gradient so more oxygen continues to diffuse from the alveoli into the blood. OR: In a leaf on a windy day, water vapour outside is blown away, keeping the external concentration low so more diffuses out through stomata [1]')">Show model answer</button>
+</div>
+
+<div class="results-panel" id="results">
+  <h2 style="font-size: 17px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.5rem;">Your MCQ results</h2>
+  <p style="font-size: 13px; color: var(--color-text-secondary);">Based on multiple choice questions answered</p>
+  <div class="results-grid">
+    <div class="result-card"><div class="val" id="r-correct">0</div><div class="lbl">Correct</div></div>
+    <div class="result-card"><div class="val" id="r-wrong">0</div><div class="lbl">Incorrect</div></div>
+    <div class="result-card"><div class="val" id="r-pct">0%</div><div class="lbl">Score</div></div>
+    <div class="result-card"><div class="val" id="r-total">0</div><div class="lbl">Attempted</div></div>
+  </div>
+</div>
+</div>
+
+<script>
+const answers = {
+  q1:'B', q2:'C', q3:'C', q4:'B', q5:'B', q6:'B',
+  q10:'C', q13:'C', q14:'B', q16:'B',
+  q19:'C', q20:'C', q21:'B', q24:'C', q25:'C', q28:'D', q30:'B', q33:'B', q36:'C',
+  q37:'D', q40:'B', q43:'C', q47:'B', q49:'B', q52:'C',
+  q55:'B', q58:'C', q63:'C', q69:'B',
+  q71:'B', q75:'C', q82:'B'
+};
+
+let scores = { correct: 0, wrong: 0 };
+
+function mcq(el, qid, choice) {
+  const parent = document.getElementById(qid);
+  if (parent.classList.contains('answered')) return;
+  const correct = answers[qid];
+  const opts = parent.querySelectorAll('.option');
+  opts.forEach(o => {
+    const letter = o.querySelector('.option-letter').textContent;
+    if (letter === correct) o.classList.add('correct');
+  });
+  const fb = document.getElementById('fb-' + qid);
+  if (choice === correct) {
+    el.classList.add('correct');
+    fb.textContent = '✓ Correct!';
+    fb.className = 'feedback correct-fb show';
+    parent.classList.add('answered');
+    scores.correct++;
+  } else {
+    el.classList.add('wrong');
+    fb.textContent = '✗ Incorrect. The correct answer is ' + correct + '.';
+    fb.className = 'feedback wrong-fb show';
+    parent.classList.add('answered');
+    parent.classList.add('wrong');
+    scores.wrong++;
+  }
+  updateScore();
+}
+
+function updateScore() {
+  const total = scores.correct + scores.wrong;
+  document.getElementById('score-display').textContent = scores.correct + ' / ' + total + ' MCQ';
+  document.getElementById('r-correct').textContent = scores.correct;
+  document.getElementById('r-wrong').textContent = scores.wrong;
+  document.getElementById('r-total').textContent = total;
+  document.getElementById('r-pct').textContent = total > 0 ? Math.round(scores.correct / total * 100) + '%' : '0%';
+  document.getElementById('results').classList.add('show');
+}
+
+function showModelAnswer(btn, text) {
+  btn.textContent = 'Hide answer';
+  btn.onclick = function() {
+    const existing = btn.previousElementSibling;
+    if (existing && existing.classList.contains('model-ans')) {
+      existing.remove();
+      btn.textContent = 'Show model answer';
+      btn.onclick = function() { showModelAnswer(btn, text); };
+      return;
+    }
+  };
+  const div = document.createElement('div');
+  div.className = 'feedback correct-fb show model-ans';
+  div.style.whiteSpace = 'pre-line';
+  div.innerHTML = '<strong style="font-size:12px;display:block;margin-bottom:4px;">Model answer:</strong>' + text;
+  btn.parentNode.insertBefore(div, btn);
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['s1','s2','s3','s4','s5'].indexOf(id);
+  document.querySelectorAll('.nav-btn')[idx].classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+</div>
